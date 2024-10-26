@@ -160,3 +160,6 @@ def generate_random_verse():
    book = books[book_number][0]
    chapter = random.randint(1,int(books[book_number][1]))
    verse = random.randint(1,int(books[book_number][2][chapter-1]))
+
+if __name__ == "__main__":
+    pass
