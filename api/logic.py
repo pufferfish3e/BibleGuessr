@@ -1,57 +1,83 @@
 import requests
 import random
-import difflib
+from typing import Optional
 
-
-def fetch_bible_verse(book, chapter, verse):
+def fetch_bible_verse(book: str, chapter: str, verse: str) -> Optional[str]:
+    
     url = "https://api.esv.org/v3/passage/text/"
-    headers = {
-        "Authorization": "218ba7cda3be2343ea707e4846fbdc278299c56e"
-    }
-    query = f"{book} {chapter}:{verse}"
-    params = {
-        "q": query,
-        "include-passage-references": False,
-        "include-verse-numbers": False,
-        "include-footnotes": False,
-        "include-copyright": False,
-        "include-headings": False
-    }
-    headers_2 = {
-        "Authorization": "218ba7cda3be2343ea707e4846fbdc278299c56e"
-    }
-    query = f"{book} {chapter}:{int(verse)-1}-{int(verse)+1}"
-    params = {
-        "q": query,
-        "include-passage-references": False,
-        "include-verse-numbers": False,
-        "include-footnotes": False,
-        "include-copyright": False,
-        "include-headings": False
-    }
-    try:
-       response = requests.get(url, headers=headers, params=params)
-       response.raise_for_status() 
-       data_main = response.json().get("passages", [""])[0].strip()[:-6]
-       response = requests.get(url, headers=headers_2, params=params)
-       response.raise_for_status()  
-       data_unformatted = response.json().get("passages", [""])[0].strip()[:-6]
-       matcher = difflib.SequenceMatcher(None, data_main, data_unformatted)
-       match = matcher.find_longest_match(0, len(data_main), 0, len(data_unformatted))
-       if match.size > 0:
-           start, end = match.a, match.a + match.size
-           highlighted_text = (
-               data_main[:start] +
-               f"<strong>{data_main[start:end]}</strong>" +
-               data_main[end:]
-           )
-       else:
-           highlighted_text = data_main
+    api_token = "218ba7cda3be2343ea707e4846fbdc278299c56e"
 
-       print(highlighted_text)
+    
+    verse_num = int(verse)
+    params_with_numbers = {
+        "q": f"{book} {chapter}:{max(1, verse_num-1)}-{verse_num+1}",
+        "include-passage-references": False,
+        "include-verse-numbers": True, 
+        "include-footnotes": False,
+        "include-copyright": False,
+        "include-headings": False
+    }
+
+    try:
+        response = requests.get(
+            url,
+            headers={"Authorization": api_token},
+            params=params_with_numbers
+        )
+        response.raise_for_status()
+        text_with_numbers = response.json().get("passages", [""])[0].strip()[:-6]
+
+        
+        verses = text_with_numbers.split(f"[{verse}]")
+
+        if len(verses) == 2:
+            
+            params_clean = params_with_numbers.copy()
+            params_clean["include-verse-numbers"] = False
+
+            clean_response = requests.get(
+                url,
+                headers={"Authorization": api_token},
+                params=params_clean
+            )
+            clean_response.raise_for_status()
+            clean_text = clean_response.json().get("passages", [""])[0].strip()[:-6]
+
+            
+            next_verse_marker = f"[{verse_num + 1}]"
+            prev_verse_marker = f"[{verse_num - 1}]"
+
+            
+            prev_text_length = len(verses[0].replace(prev_verse_marker, "").strip())
+            target_verse_length = len(verses[1].split(next_verse_marker)[0].strip())
+
+            
+            start_pos = prev_text_length + (1 if prev_text_length > 0 else 0)  
+            end_pos = start_pos + target_verse_length
+
+            highlighted_text = (
+                clean_text[:start_pos].strip() +
+                (" " if start_pos > 0 else "") +
+                f"<strong>{clean_text[start_pos:end_pos].strip()}</strong>" +
+                (" " if end_pos < len(clean_text) else "") +
+                clean_text[end_pos:].strip()
+            )
+
+            return highlighted_text.strip()
+
+        
+        params_clean = params_with_numbers.copy()
+        params_clean["include-verse-numbers"] = False
+        clean_response = requests.get(
+            url,
+            headers={"Authorization": api_token},
+            params=params_clean
+        )
+        return clean_response.json().get("passages", [""])[0].strip()[:-6]
 
     except requests.exceptions.RequestException as e:
-        print("An error occurred:", e)
+        print(f"Error fetching Bible verse: {e}")
+        return None
 
 books = {
   1: ["Genesis", 50, [31, 25, 24, 26, 32, 22, 24, 22, 29, 32, 30, 20, 18, 16, 21, 16, 27, 33, 30, 18, 24, 34, 20, 67, 34, 35, 24, 21, 30, 43, 55, 23, 21, 20, 18, 31, 20, 27, 25, 29, 23, 31, 18, 16, 12, 16, 27, 28, 26, 32]],
