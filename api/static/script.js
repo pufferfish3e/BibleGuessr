@@ -56,3 +56,41 @@ numberInputs.forEach(input => {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const hintElements = document.querySelectorAll('.hint');
+    const hintDropdowns = document.querySelectorAll('.hint-dropdown');
+
+    
+    hintElements.forEach((hint, index) => {
+        hint.addEventListener('click', function(e) {
+            e.stopPropagation();
+
+            
+            hintDropdowns.forEach((dropdown, dropIndex) => {
+                if (dropIndex !== index) {
+                    dropdown.classList.remove('active');
+                    hintElements[dropIndex].classList.remove('active');
+                }
+            });
+
+            
+            const dropdown = this.nextElementSibling;
+            dropdown.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+    });
+
+    
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.hint-container')) {
+            hintDropdowns.forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+            hintElements.forEach(hint => {
+                hint.classList.remove('active');
+            });
+        }
+    });
+});

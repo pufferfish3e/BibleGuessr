@@ -5,16 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Modern Form</title>
+    <title>BibleGuessr!</title>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Modern Form</h1>
+        <h1 class="title">BibleGuessr</h1>
         
         <div class="text-area-container">
             <div class="text-display">{{ text_content }}</div>
         </div>
-
+        <div class="hint-container">
+             <select class="hint">
+                 <option value="default" selected>Hint 1: {{hintPlaceholder1}}</option>
+             </select>
+         </div>
+        <div class="hint-container">
+              <select class="hint">
+                  <option value="default" selected>Hint 2: {{hintPlaceholder}}</option>
+              </select>
+          </div>
         <div class="input-group">
             <input type="text" id="textInput" placeholder="Type to search...">
             <div class="suggestions" id="suggestions"></div>
