@@ -106,3 +106,4 @@ def generate_random_verse():
    verse = random.randint(1,int(books[book_number][2][chapter-1]))
 generate_random_verse()
 fetch_bible_verse(str(book),int(chapter),int(verse))
+
