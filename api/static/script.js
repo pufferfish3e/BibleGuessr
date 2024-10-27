@@ -1,4 +1,3 @@
-
 const wordList = [
     'dead', 'death', 'decay', 'december', 'decline', 'deep',
     'degree', 'delay', 'deliver', 'demand', 'democracy',
@@ -94,3 +93,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function resizeTextArea() {
+  const textArea = document.querySelector('.text-area-container');
+  const textContent = textArea.querySelector('.text-display');
+  textArea.style.height = 'auto';
+  textArea.style.height = textContent.scrollHeight + 'px';
+}

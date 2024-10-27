@@ -1,84 +1,7 @@
 import requests
 import random
 from typing import Optional
-
-def fetch_bible_verse(book: str, chapter: str, verse: str) -> Optional[str]:
-    
-    url = "https://api.esv.org/v3/passage/text/"
-    api_token = "218ba7cda3be2343ea707e4846fbdc278299c56e"
-
-    
-    verse_num = int(verse)
-    params_with_numbers = {
-        "q": f"{book} {chapter}:{max(1, verse_num-1)}-{verse_num+1}",
-        "include-passage-references": False,
-        "include-verse-numbers": True, 
-        "include-footnotes": False,
-        "include-copyright": False,
-        "include-headings": False
-    }
-
-    try:
-        response = requests.get(
-            url,
-            headers={"Authorization": api_token},
-            params=params_with_numbers
-        )
-        response.raise_for_status()
-        text_with_numbers = response.json().get("passages", [""])[0].strip()[:-6]
-
-        
-        verses = text_with_numbers.split(f"[{verse}]")
-
-        if len(verses) == 2:
-            
-            params_clean = params_with_numbers.copy()
-            params_clean["include-verse-numbers"] = False
-
-            clean_response = requests.get(
-                url,
-                headers={"Authorization": api_token},
-                params=params_clean
-            )
-            clean_response.raise_for_status()
-            clean_text = clean_response.json().get("passages", [""])[0].strip()[:-6]
-
-            
-            next_verse_marker = f"[{verse_num + 1}]"
-            prev_verse_marker = f"[{verse_num - 1}]"
-
-            
-            prev_text_length = len(verses[0].replace(prev_verse_marker, "").strip())
-            target_verse_length = len(verses[1].split(next_verse_marker)[0].strip())
-
-            
-            start_pos = prev_text_length + (1 if prev_text_length > 0 else 0)  
-            end_pos = start_pos + target_verse_length
-
-            highlighted_text = (
-                clean_text[:start_pos].strip() +
-                (" " if start_pos > 0 else "") +
-                f"<strong>{clean_text[start_pos:end_pos].strip()}</strong>" +
-                (" " if end_pos < len(clean_text) else "") +
-                clean_text[end_pos:].strip()
-            )
-
-            return highlighted_text.strip()
-
-        
-        params_clean = params_with_numbers.copy()
-        params_clean["include-verse-numbers"] = False
-        clean_response = requests.get(
-            url,
-            headers={"Authorization": api_token},
-            params=params_clean
-        )
-        return clean_response.json().get("passages", [""])[0].strip()[:-6]
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching Bible verse: {e}")
-        return None
-
+   
 books = {
   1: ["Genesis", 50, [31, 25, 24, 26, 32, 22, 24, 22, 29, 32, 30, 20, 18, 16, 21, 16, 27, 33, 30, 18, 24, 34, 20, 67, 34, 35, 24, 21, 30, 43, 55, 23, 21, 20, 18, 31, 20, 27, 25, 29, 23, 31, 18, 16, 12, 16, 27, 28, 26, 32]],
   2: ["Exodus", 40, [22, 25, 22, 31, 23, 30, 25, 28, 35, 29, 10, 36, 20, 31, 27, 36, 16, 27, 25, 26, 37, 31, 21, 19, 40, 37]],
@@ -148,18 +71,58 @@ books = {
   66: ["Revelation", 22, [20, 29, 22, 11, 14, 17, 17, 13, 21, 11, 18, 17, 18, 20, 16, 21, 27, 24, 21, 21, 24, 21]]
 }
 
-
 def generate_random_verse():
+   global book_number
    global book
    global book_index
    global chapter
    global verse
-   global extended_verse
+   global max_verse
    book_number = random.randint(1,66)
    book_index = book_number
    book = books[book_number][0]
    chapter = random.randint(1,int(books[book_number][1]))
-   verse = random.randint(1,int(books[book_number][2][chapter-1]))
+   verse = random.randint(1,int(books[book_number][2][int(chapter)-1]))
+   max_verse = int(books[book_number][2][int(chapter)-1])
+   
+def fetch_bible_verse(book: str, chapter: str, verse: str) -> Optional[str]:
+    url = "https://api.esv.org/v3/passage/text/"
+    api_token = "218ba7cda3be2343ea707e4846fbdc278299c56e"
+    print(f"{book} {chapter}:{int(verse)-1}-{int(verse)+1}")
+    verse_num = int(verse)
+    params_with_numbers = {
+        "q": f"{book} {chapter}:{verse_num-1}-{verse_num+1}",
+        "include-passage-references": False,
+        "include-verse-numbers": True, 
+        "include-footnotes": False,
+        "include-copyright": False,
+        "include-headings": False,
+        "include-selahs": False
+
+    }
+
+    try:
+        response = requests.get(
+            url,
+            headers={"Authorization": api_token},
+            params=params_with_numbers
+        )
+        response.raise_for_status()
+        response = response.json().get("passages", [""])[0].strip()[:-6].split("[")
+        cleaned_response = []
+        for item in response:
+           if "]" in item:
+              item = item.split("]")[1].strip()
+              cleaned_response.append(item)
+        if len(cleaned_response) == 3:
+           return f"{cleaned_response[0]} <strong>{cleaned_response[1]}</strong> {cleaned_response[2]}"
+        if len(cleaned_response) == 2 and int(verse) == int(max_verse):
+           return f"{cleaned_response[0]} <strong>{cleaned_response[1]}</strong>"
+        else:
+           return f"<strong>{cleaned_response[0]}</strong> {cleaned_response[1]}"
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching Bible verse: {e}")
+        return None
 
 if __name__ == "__main__":
-    pass
+   pass
