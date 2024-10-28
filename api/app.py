@@ -10,8 +10,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
+    return render_template('landing_page.html')
+
+@app.route('/BibleGuessr')
+def bibleguessr():
     global data
-    return render_template('index.html', text_content=Markup(data))  
+    return render_template('bibleguessr.html', text_content=Markup(data), hint1=f"Book: {str(logic.book)}", hint2=f"Book and Chapter: {str(logic.book)} {str(logic.chapter)}")  
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000)) 

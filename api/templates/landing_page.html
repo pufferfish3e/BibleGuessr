@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BibleGuessr</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='landing_page.css') }}">
+</head>
+<body>
+  <header>
+    <h1>BibleGuessr</h1>
+    <p>Guess the Bible verse from a given extract!</p>
+  </header>
+
+  <main>
+    <section class="hero">
+      <img src="/api/placeholder/600/400" alt="BibleGuessr App Preview">
+      <div class="hero-content">
+        <h2>Test Your Biblical Knowledge</h2>
+        <p>BibleGuessr is a fun game that challenges you to guess the correct Bible verse from a given extract. The closer you are, the more points you score!</p>
+         <form action="{{ url_for('bibleguessr') }}" method="get">
+             <button type="submit" class="cta-button">Play Now</button>
+         </form>
+      </div>
+    </section>
+
+    <section class="features">
+      <h2>Key Features</h2>
+      <ul>
+        <li>Guess the Bible verse from an extract</li>
+        <li>Score points based on how close your guess is</li>
+        <li>Track your progress and high scores</li>
+        <li>Engage with a community of Bible enthusiasts</li>
+      </ul>
+    </section>
+
+    <section class="about">
+      <h2>About BibleGuessr</h2>
+      <p>BibleGuessr is a personal project created by a secondary school student who wanted to build a fun, interactive way to test their knowledge of the Bible. Whether you're a seasoned scholar or just getting started, BibleGuessr is a great way to challenge yourself and have some fun in the process.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 BibleGuessr. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -4,38 +4,42 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+   <link rel="stylesheet" href="{{ url_for('static', filename='bibleguessr.css') }}">
     <title>BibleGuessr!</title>
 </head>
 <body>
     <div class="container">
         <h1 class="title">BibleGuessr</h1>
-        
+
         <div class="text-area-container">
             <div class="text-display">{{ text_content }}</div>
         </div>
-        <div class="hint-container">
-             <select class="hint">
-                 <option class="suggestions" value="default" selected>Hint 1: {{hintPlaceholder1}}</option>
-             </select>
-         </div>
-        <div class="hint-container">
-              <select class="hint">
-                  <option class="suggestions" value="default" selected>Hint 2: {{hintPlaceholder}}</option>
-              </select>
-          </div>
+       <div class="input-group">
+           <div class="text-show">Need a Hint?</div>
+             <button class="show-hints">Show Hint 1</button>
+             <div class="hints">
+               <div class="hint hint-1" data-hint="Hint 1">{{hint1}}</div>
+             </div>
+             <button class="show-hints-2">Show Hint 2</button>
+               <div class="hints-2">
+               <div class="hint hint-2" data-hint="Hint 2">{{hint2}}</div>
+             </div>
+       </div>
+      <div class="text-area-container">
         <div class="input-group">
             <input type="text" id="textInput" placeholder="Type to search...">
             <div class="suggestions" id="suggestions"></div>
         </div>
-        
         <div class="input-group">
             <input type="number" id="numberInput1" placeholder="Enter first number">
-        </div>
-        
+        </div>    
         <div class="input-group">
             <input type="number" id="numberInput2" placeholder="Enter second number">
         </div>
+       <form action="{{ url_for('bibleguessr') }}" method="get">
+           <button type="submit" class="cta-button">Play again</button>
+       </form>
+      </div>
     </div>
    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
