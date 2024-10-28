@@ -101,7 +101,9 @@ def fetch_bible_verse(book: str, chapter: str, verse: str) -> Optional[str]:
         "include-copyright": False,
         "include-headings": False,
         "include-selahs": False,
-        "indent-paragraphs": 0
+        "indent-paragraphs": 0,
+        "indent-poetry-lines": 0,
+        "indent-psalm-doxology": 0
     }
 
     try:
@@ -116,7 +118,10 @@ def fetch_bible_verse(book: str, chapter: str, verse: str) -> Optional[str]:
         for item in response:
            if "]" in item:
               item = item.split("]")[1].strip()
-              cleaned_response.append(item)
+           if "\n" in item:
+              item = str(item.replace("\n",""))
+           cleaned_response.append(item)
+        cleaned_response = cleaned_response[1:]
         if len(cleaned_response) == 3:
            return f"{cleaned_response[0]} <strong>{cleaned_response[1]}</strong> {cleaned_response[2]}"
         if len(cleaned_response) == 2 and int(verse) == int(max_verse):
