@@ -1,7 +1,10 @@
 import requests
 import random
 from typing import Optional
-   
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 books = {
   1: ["Genesis", 50, [31, 25, 24, 26, 32, 22, 24, 22, 29, 32, 30, 20, 18, 16, 21, 16, 27, 33, 30, 18, 24, 34, 20, 67, 34, 35, 24, 21, 30, 43, 55, 23, 21, 20, 18, 31, 20, 27, 25, 29, 23, 31, 18, 16, 12, 16, 27, 28, 26, 32]],
   2: ["Exodus", 40, [22, 25, 22, 31, 23, 30, 25, 28, 35, 29, 10, 36, 20, 31, 27, 36, 16, 27, 25, 26, 37, 31, 21, 19, 40, 37]],
@@ -87,7 +90,7 @@ def generate_random_verse():
    
 def fetch_bible_verse(book: str, chapter: str, verse: str) -> Optional[str]:
     url = "https://api.esv.org/v3/passage/text/"
-    api_token = "218ba7cda3be2343ea707e4846fbdc278299c56e"
+    api_token = os.getenv("ESV_API_KEY")
     print(f"{book} {chapter}:{int(verse)-1}-{int(verse)+1}")
     verse_num = int(verse)
     params_with_numbers = {
@@ -97,8 +100,8 @@ def fetch_bible_verse(book: str, chapter: str, verse: str) -> Optional[str]:
         "include-footnotes": False,
         "include-copyright": False,
         "include-headings": False,
-        "include-selahs": False
-
+        "include-selahs": False,
+        "indent-paragraphs": 0
     }
 
     try:
