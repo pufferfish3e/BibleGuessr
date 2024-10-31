@@ -104,6 +104,18 @@ body {
     letter-spacing: 5px;
 }
 
+.word-container {
+   padding: 20px;
+   font-size: 20px;
+}
+
+.word-container p strong {
+   color: red;
+}
+
+.word-container h3 strong {
+   color: white;
+}
 
 .faulty-letter {
     color:white;
@@ -136,7 +148,7 @@ body {
     margin-right: -0.8em;
     text-shadow: 0 0 0.5em var(--text-shadow-color), 
                  0 0 0.5em var(--glow-color);
-    animation: text-flicker 8s linear infinite;
+    animation: text-flicker 5s linear infinite;
 }
 
 
