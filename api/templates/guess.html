@@ -19,7 +19,8 @@
         </div>
       <div class="word-container">
          <p>You got <strong>{{ score }}</strong> points!</p>
-         <h3>The actual verse was: <strong>{{ book }} {{ chapter }}:{{ verse }}</strong></p>
+         <h3>The actual verse was: <strong>{{ book }} {{ chapter }}:{{ verse }}</strong></h3>
+         <h4>You beat an average of about <strong>{{ average }}%</strong> of players!</h4>
       </div>
        <form action="{{ url_for('bibleguessr') }}" method="POST">
            <button type="submit" class="show-hints glowing-btn">Play Again</button>

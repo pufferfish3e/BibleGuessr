@@ -137,10 +137,8 @@ def points(user_book, user_chapter, user_verse):
    global verse
    score = 1000
    for counter in range(1,67):
-      if books[counter][0] == user_book:
+      if str(books[counter][0]).lower() == str(user_book):
          user_book = counter
-      else:
-         return "0"
    user_book = int(user_book)
    
    if user_book == book:
@@ -205,6 +203,14 @@ def points(user_book, user_chapter, user_verse):
          score += 2
    score = int(score)
    return score
-   
+
+def average(score: int):
+   percentage = float(0.0)
+   if score < 500:
+      return percentage
+   else:
+      percentage /= 10
+   return percentage
+
 if __name__ == "__main__":
    pass

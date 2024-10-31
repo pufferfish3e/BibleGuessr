@@ -43,17 +43,23 @@ body {
 
 .text-display {
     font-size: 20px;
+    padding: 5px;
     text-align: left;
     width: 100%;
     min-height: 200px;
     overflow: auto;
     background-color: black;
     border: 2px solid var(--input-border-color);
-    border-radius: 12px;
+    border-radius: 20px;
     line-height: 1.6;
     white-space: pre-wrap;
     color: white;
 }
+
+.text-display strong {
+   color: red;
+}
+
 
 .text-show {
     width: 100%;
@@ -111,10 +117,26 @@ body {
 
 .word-container p strong {
    color: red;
+   font-size: 50px;
 }
 
 .word-container h3 strong {
    color: white;
+}
+
+.word-container h4 strong {
+   color: red;
+   font-size: 25px;
+}
+.error {
+   opacity: 50%;
+   background-color: red; 
+}
+
+#error-message {
+    color: red; 
+    margin-top: 5px; 
+    font-size: 0.9em; 
 }
 
 .faulty-letter {

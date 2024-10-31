@@ -1,13 +1,24 @@
-// hints.js
-
-// Animation timing constants
 const TRANSITION_DURATION = 500;
-const BUTTON_ANIMATION_DURATION = 200;
+const BUTTON_ANIMATION_DURATION = 500;
 const HINT_SLIDE_DURATION = 300;
+const validWords = [
+    "genesis", "exodus", "leviticus", "numbers", "deuteronomy", 
+    "joshua", "judges", "ruth", "1 samuel", "2 samuel", 
+    "1 kings", "2 kings", "1 chronicles", "2 chronicles", 
+    "ezra", "nehemiah", "esther", "job", "psalms", "proverbs", 
+    "ecclesiastes", "song of solomon", "isaiah", "jeremiah", 
+    "lamentations", "ezekiel", "daniel", "hosea", "joel", "amos", 
+    "obadiah", "jonah", "micah", "nahum", "habakkuk", "zephaniah", 
+    "haggai", "zechariah", "malachi", "matthew", "mark", "luke", 
+    "john", "acts", "romans", "1 corinthians", "2 corinthians", 
+    "galatians", "ephesians", "philippians", "colossians", 
+    "1 thessalonians", "2 thessalonians", "1 timothy", "2 timothy", 
+    "titus", "philemon", "hebrews", "james", "1 peter", "2 peter", 
+    "1 john", "2 john", "3 john", "jude", "revelation"
+];
 
 class HintSystem {
     constructor() {
-        // Initialize element references
         this.elements = {
             hint1: {
                 button: document.querySelector('.show-hints'),
@@ -25,16 +36,11 @@ class HintSystem {
     }
 
     initializeSystem() {
-        // Validate elements exist
         if (!this.validateElements()) {
             console.error('Required hint elements are missing');
             return;
         }
-
-        // Set initial states
         this.setInitialStates();
-
-        // Bind event listeners
         this.bindEvents();
     }
 
@@ -45,19 +51,16 @@ class HintSystem {
     }
 
     setInitialStates() {
-        // Hide hint containers initially
         Object.values(this.elements).forEach(({container}) => {
             container.style.display = 'none';
         });
 
-        // Set transitions for hint texts
         Object.values(this.elements).forEach(({text}) => {
             text.style.transition = 'transform 0.3s ease-in-out';
         });
     }
 
     bindEvents() {
-        // Bind button click events
         Object.values(this.elements).forEach(({button, container}) => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -66,7 +69,6 @@ class HintSystem {
             });
         });
 
-        // Bind hint reveal events
         Object.values(this.elements).forEach(({text}) => {
             text.addEventListener('click', () => this.revealHint(text));
         });
@@ -76,18 +78,14 @@ class HintSystem {
         const isHidden = container.style.display === 'none' || !container.style.display;
 
         if (isHidden) {
-            // Show container
             container.style.opacity = '0';
             container.style.display = 'block';
             container.style.transition = `opacity ${TRANSITION_DURATION}ms ease-in-out`;
 
-            // Force reflow
             void container.offsetHeight;
 
-            // Fade in
             container.style.opacity = '1';
         } else {
-            // Fade out
             container.style.opacity = '0';
             setTimeout(() => {
                 container.style.display = 'none';
@@ -110,12 +108,10 @@ class HintSystem {
                 return;
             }
 
-            // Slide animation
             hintElement.style.transform = 'translateX(10px)';
             hintElement.textContent = hintText;
             hintElement.setAttribute('data-show', 'true');
 
-            // Reset position
             setTimeout(() => {
                 hintElement.style.transform = 'translateX(0)';
             }, HINT_SLIDE_DURATION);
@@ -123,7 +119,48 @@ class HintSystem {
     }
 }
 
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    new HintSystem();
+// Input Validation
+const textInput = document.getElementById('textInput');
+const form = textInput.closest('form');
+
+function validateInput(input) {
+    const trimmedInput = input.trim().toLowerCase();
+    return validWords.includes(trimmedInput);
+}
+
+form.addEventListener('submit', function(event) {
+    const inputValue = textInput.value;
+
+    if (!validateInput(inputValue)) {
+        // Prevent form submission
+        event.preventDefault();
+
+        // Add error styling
+        textInput.classList.add('error');
+
+        // Create or find error message
+        let errorMessage = document.getElementById('error-message');
+        if (!errorMessage) {
+            errorMessage = document.createElement('div');
+            errorMessage.id = 'error-message';
+            errorMessage.style.color = 'red';
+            textInput.insertAdjacentElement('afterend', errorMessage);
+        }
+        errorMessage.textContent = 'Not a valid Book!';
+    } else {
+        // Remove error styling
+        textInput.classList.remove('error');
+
+        // Remove error message
+        const errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+            errorMessage.remove();
+        }
+
+        // Log valid submission
+        console.log('Valid word submitted:', inputValue);
+    }
 });
+
+// Initialize Hint System
+new HintSystem();

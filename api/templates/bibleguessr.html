@@ -19,7 +19,7 @@
                   <span class="glowing-txt">H<span class="faulty-letter">i</span>nt 1</span>
               </button>
               <div class="hints">
-                  <div class="hint" data-hint="{{hint1}}">Click to reveal first hint</div>
+                  <div class="hint" data-hint="{{hint1}}"><strong>Click me!</strong></div>
               </div>
           </div>
              <div class="hints-container">
@@ -27,7 +27,7 @@
                      <span class="glowing-txt">H<span class="faulty-letter">i</span>nt 2</span>
                  </button>
                  <div class="hints-2">
-                     <div class="hint" data-hint="{{hint2}}">Click to reveal second hint</div>
+                     <div class="hint" data-hint="{{hint2}}"><strong>Click me!</strong></div>
                  </div>
              </div>
          <form action="{{ url_for('guess') }}" method="POST">

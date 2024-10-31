@@ -23,13 +23,14 @@ def bibleguessr():
 @app.route('/guess', methods=["GET","POST"])
 def guess():
    score = None
+   average = 0
    if request.method == "POST":
       my_book = request.form["book"]
       my_chapter = request.form["chapter"]
       my_verse = request.form["verse"]
-      print(my_book,my_chapter,my_verse)
       score = logic.points(my_book,my_chapter,my_verse)
-   return render_template('guess.html',text_content=Markup(data), score=score, book=str(logic.book), chapter=str(logic.chapter), verse=str(logic.verse))
+      average = logic.average(score)
+   return render_template('guess.html',average=average,text_content=Markup(data), score=score, book=str(logic.book), chapter=str(logic.chapter), verse=str(logic.verse))
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000)) 
