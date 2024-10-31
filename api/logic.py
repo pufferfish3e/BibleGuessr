@@ -4,7 +4,7 @@ from typing import Optional
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 books = {
   1: ["Genesis", 50, [31, 25, 24, 26, 32, 22, 24, 22, 29, 32, 30, 20, 18, 16, 21, 16, 27, 33, 30, 18, 24, 34, 20, 67, 34, 35, 24, 21, 30, 43, 55, 23, 21, 20, 18, 31, 20, 27, 25, 29, 23, 31, 18, 16, 12, 16, 27, 28, 26, 32]],
   2: ["Exodus", 40, [22, 25, 22, 31, 23, 30, 25, 28, 35, 29, 10, 36, 20, 31, 27, 36, 16, 27, 25, 26, 37, 31, 21, 19, 40, 37]],
@@ -75,23 +75,21 @@ books = {
 }
 
 def generate_random_verse():
-   global book_number
+   global books
    global book
    global book_index
    global chapter
    global verse
    global max_verse
-   book_number = random.randint(1,66)
-   book_index = book_number
-   book = books[book_number][0]
-   chapter = random.randint(1,int(books[book_number][1]))
-   verse = random.randint(1,int(books[book_number][2][int(chapter)-1]))
-   max_verse = int(books[book_number][2][int(chapter)-1])
+   book_index = random.randint(1,66)
+   book = books[book_index][0]
+   chapter = random.randint(1,int(books[book_index][1]))
+   verse = random.randint(1,int(books[book_index][2][int(chapter)-1]))
+   max_verse = int(books[book_index][2][int(chapter-1)])
    
 def fetch_bible_verse(book: str, chapter: str, verse: str) -> Optional[str]:
     url = "https://api.esv.org/v3/passage/text/"
     api_token = os.getenv("ESV_API_KEY")
-    print(f"{book} {chapter}:{int(verse)-1}-{int(verse)+1}")
     verse_num = int(verse)
     params_with_numbers = {
         "q": f"{book} {chapter}:{verse_num-1}-{verse_num+1}",
@@ -119,18 +117,94 @@ def fetch_bible_verse(book: str, chapter: str, verse: str) -> Optional[str]:
            if "]" in item:
               item = item.split("]")[1].strip()
            if "\n" in item:
-              item = str(item.replace("\n",""))
+              item = str(item.replace("\n"," "))
            cleaned_response.append(item)
         cleaned_response = cleaned_response[1:]
         if len(cleaned_response) == 3:
            return f"{cleaned_response[0]} <strong>{cleaned_response[1]}</strong> {cleaned_response[2]}"
         if len(cleaned_response) == 2 and int(verse) == int(max_verse):
            return f"{cleaned_response[0]} <strong>{cleaned_response[1]}</strong>"
-        else:
+        elif len(cleaned_response) == 2 and int(verse) != int(max_verse):
            return f"<strong>{cleaned_response[0]}</strong> {cleaned_response[1]}"
     except requests.exceptions.RequestException as e:
         print(f"Error fetching Bible verse: {e}")
         return None
 
+def points(user_book, user_chapter, user_verse):
+   global books
+   global book
+   global chapter
+   global verse
+   score = 1000
+   for counter in range(1,67):
+      if books[counter][0] == user_book:
+         user_book = counter
+      else:
+         return "0"
+   user_book = int(user_book)
+   
+   if user_book == book:
+      pass
+   else:
+      book_result = abs(int(user_book)-int(book_index))
+      if book_result < 2:
+         score *= 0.9
+      elif book_result < 4:
+         score *= 0.8
+      elif book_result < 6:
+         score *= 0.7
+      elif book_result < 10:
+         score *= 0.6
+      elif book_result < 15:
+         score *= 0.5
+      elif book_result < 20:
+         score *= 0.4
+      elif book_result < 25:
+         score *= 0.3
+      else:
+         score *= 0.2
+   if user_chapter == chapter:
+      pass
+   else:
+      chapter_result = abs(int(user_chapter)-int(chapter))
+      if chapter_result < 2:
+         score += 90
+      elif chapter_result < 4:
+         score += 80
+      elif chapter_result < 6:
+         score += 70
+      elif chapter_result < 10:
+         score += 60
+      elif chapter_result < 15:
+         score += 50
+      elif chapter_result < 20:
+         score += 40
+      elif chapter_result < 25:
+         score += 30
+      else:
+         score += 20
+   if user_verse == verse:
+      pass
+   else:
+      verse_result = abs(int(user_verse)-int(verse))
+      if verse_result < 2:
+         score += 9
+      elif verse_result < 4:
+         score += 8
+      elif verse_result < 6:
+         score += 7
+      elif verse_result < 10:
+         score += 6
+      elif verse_result < 15:
+         score += 5
+      elif verse_result < 20:
+         score += 4
+      elif verse_result < 25:
+         score += 3
+      else:
+         score += 2
+   score = int(score)
+   return score
+   
 if __name__ == "__main__":
    pass
