@@ -1,10 +1,13 @@
+
 import requests
 import random
-from typing import Optional
+from typing import Optional, Tuple, Dict, Any
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Bible books data structure
 books = {
   1: ["Genesis", 50, [31, 25, 24, 26, 32, 22, 24, 22, 29, 32, 30, 20, 18, 16, 21, 16, 27, 33, 30, 18, 24, 34, 20, 67, 34, 35, 24, 21, 30, 43, 55, 23, 21, 20, 18, 31, 20, 27, 25, 29, 23, 31, 18, 16, 12, 16, 27, 28, 26, 32]],
   2: ["Exodus", 40, [22, 25, 22, 31, 23, 30, 25, 28, 35, 29, 10, 36, 20, 31, 27, 36, 16, 27, 25, 26, 37, 31, 21, 19, 40, 37]],
@@ -74,25 +77,52 @@ books = {
   66: ["Revelation", 22, [20, 29, 22, 11, 14, 17, 17, 13, 21, 11, 18, 17, 18, 20, 16, 21, 27, 24, 21, 21, 24, 21]]
 }
 
-def generate_random_verse():
-   global books
-   global book
-   global book_index
-   global chapter
-   global verse
-   global max_verse
-   book_index = random.randint(1,66)
-   book = books[book_index][0]
-   chapter = random.randint(1,int(books[book_index][1]))
-   verse = random.randint(1,int(books[book_index][2][int(chapter)-1]))
-   max_verse = int(books[book_index][2][int(chapter-1)])
-   
+# Global variables for current verse
+current_verse = {
+    "book_index": None,
+    "book": None,
+    "chapter": None,
+    "verse": None,
+    "max_verse": None
+}
+
+def generate_random_verse() -> Dict[str, Any]:
+    """Generate a random Bible verse and return its details"""
+    book_index = random.randint(1, 66)
+    book = books[book_index][0]
+    chapter = random.randint(1, int(books[book_index][1]))
+    max_verse = int(books[book_index][2][int(chapter)-1])
+    verse = random.randint(1, max_verse)
+    
+    # Update global state
+    current_verse.update({
+        "book_index": book_index,
+        "book": book,
+        "chapter": chapter,
+        "verse": verse,
+        "max_verse": max_verse
+    })
+    
+    return current_verse
+
 def fetch_bible_verse(book: str, chapter: str, verse: str) -> Optional[str]:
+    """Fetch a Bible verse from the ESV API and format it for display"""
     url = "https://api.esv.org/v3/passage/text/"
     api_token = os.getenv("ESV_API_KEY")
+    
+    if not api_token:
+        print("Error: ESV API key not found in environment variables")
+        return None
+    
     verse_num = int(verse)
-    params_with_numbers = {
-        "q": f"{book} {chapter}:{verse_num-1}-{verse_num+1}",
+    max_verse = current_verse["max_verse"]
+    
+    # Calculate verse range to fetch (previous, current, and next verse)
+    start_verse = max(1, verse_num - 1)
+    end_verse = min(max_verse, verse_num + 1)
+    
+    params = {
+        "q": f"{book} {chapter}:{start_verse}-{end_verse}",
         "include-passage-references": False,
         "include-verse-numbers": True, 
         "include-footnotes": False,
@@ -108,109 +138,163 @@ def fetch_bible_verse(book: str, chapter: str, verse: str) -> Optional[str]:
         response = requests.get(
             url,
             headers={"Authorization": api_token},
-            params=params_with_numbers
+            params=params
         )
         response.raise_for_status()
-        response = response.json().get("passages", [""])[0].strip()[:-6].split("[")
+        
+        # Process API response
+        raw_text = response.json().get("passages", [""])[0].strip()
+        if not raw_text:
+            return "Could not fetch Bible verse. Please try again."
+            
+        # Remove copyright notice if present
+        if raw_text.endswith("ESV"):
+            raw_text = raw_text[:-6]
+            
+        # Split by verse numbers
+        parts = raw_text.split("[")
         cleaned_response = []
-        for item in response:
-           if "]" in item:
-              item = item.split("]")[1].strip()
-           if "\n" in item:
-              item = str(item.replace("\n"," "))
-           cleaned_response.append(item)
-        cleaned_response = cleaned_response[1:]
+        
+        for item in parts:
+            if "]" in item:
+                item = item.split("]")[1].strip()
+            if "\n" in item:
+                item = str(item.replace("\n", " "))
+            if item:  # Only add non-empty items
+                cleaned_response.append(item)
+        
+        # Skip the first empty element if it exists
+        if cleaned_response and not cleaned_response[0]:
+            cleaned_response = cleaned_response[1:]
+        
+        # Format the verse with the target verse highlighted
         if len(cleaned_response) == 3:
-           return f"{cleaned_response[0]} <strong>{cleaned_response[1]}</strong> {cleaned_response[2]}"
-        if len(cleaned_response) == 2 and int(verse) == int(max_verse):
-           return f"{cleaned_response[0]} <strong>{cleaned_response[1]}</strong>"
-        elif len(cleaned_response) == 2 and int(verse) != int(max_verse):
-           return f"<strong>{cleaned_response[0]}</strong> {cleaned_response[1]}"
+            return f"{cleaned_response[0]} <strong>{cleaned_response[1]}</strong> {cleaned_response[2]}"
+        elif len(cleaned_response) == 2:
+            if int(verse) == max_verse:
+                return f"{cleaned_response[0]} <strong>{cleaned_response[1]}</strong>"
+            else:
+                return f"<strong>{cleaned_response[0]}</strong> {cleaned_response[1]}"
+        elif len(cleaned_response) == 1:
+            return f"<strong>{cleaned_response[0]}</strong>"
+        else:
+            return "Error formatting Bible verse."
+            
     except requests.exceptions.RequestException as e:
         print(f"Error fetching Bible verse: {e}")
-        return None
+        return f"Error fetching Bible verse: {str(e)}"
 
-def points(user_book, user_chapter, user_verse):
-   global books
-   global book
-   global chapter
-   global verse
-   score = 1000
-   for counter in range(1,67):
-      if str(books[counter][0]).lower() == str(user_book):
-         user_book = counter
-   user_book = int(user_book)
-   
-   if user_book == book:
-      pass
-   else:
-      book_result = abs(int(user_book)-int(book_index))
-      if book_result < 2:
-         score *= 0.9
-      elif book_result < 4:
-         score *= 0.8
-      elif book_result < 6:
-         score *= 0.7
-      elif book_result < 10:
-         score *= 0.6
-      elif book_result < 15:
-         score *= 0.5
-      elif book_result < 20:
-         score *= 0.4
-      elif book_result < 25:
-         score *= 0.3
-      else:
-         score *= 0.2
-   if user_chapter == chapter:
-      pass
-   else:
-      chapter_result = abs(int(user_chapter)-int(chapter))
-      if chapter_result < 2:
-         score += 90
-      elif chapter_result < 4:
-         score += 80
-      elif chapter_result < 6:
-         score += 70
-      elif chapter_result < 10:
-         score += 60
-      elif chapter_result < 15:
-         score += 50
-      elif chapter_result < 20:
-         score += 40
-      elif chapter_result < 25:
-         score += 30
-      else:
-         score += 20
-   if user_verse == verse:
-      pass
-   else:
-      verse_result = abs(int(user_verse)-int(verse))
-      if verse_result < 2:
-         score += 9
-      elif verse_result < 4:
-         score += 8
-      elif verse_result < 6:
-         score += 7
-      elif verse_result < 10:
-         score += 6
-      elif verse_result < 15:
-         score += 5
-      elif verse_result < 20:
-         score += 4
-      elif verse_result < 25:
-         score += 3
-      else:
-         score += 2
-   score = int(score)
-   return score
+def calculate_score(user_book: str, user_chapter: str, user_verse: str) -> int:
+    """Calculate the user's score based on how close their guess is to the actual verse"""
+    # Initialize score
+    score = 1000
+    
+    # Convert book name to book index if needed
+    if isinstance(user_book, str) and not user_book.isdigit():
+        user_book_index = None
+        user_book_lower = user_book.lower()
+        for idx, book_data in books.items():
+            if book_data[0].lower() == user_book_lower:
+                user_book_index = idx
+                break
+        
+        if user_book_index is None:
+            # If book not found, major penalty
+            score *= 0.1
+            user_book_index = 0
+    else:
+        user_book_index = int(user_book)
+    
+    # Score for book accuracy
+    if user_book_index == current_verse["book_index"]:
+        # Correct book, no penalty
+        pass
+    else:
+        # Calculate penalty based on distance
+        book_diff = abs(user_book_index - current_verse["book_index"])
+        if book_diff < 2:
+            score *= 0.9
+        elif book_diff < 4:
+            score *= 0.8
+        elif book_diff < 6:
+            score *= 0.7
+        elif book_diff < 10:
+            score *= 0.6
+        elif book_diff < 15:
+            score *= 0.5
+        elif book_diff < 20:
+            score *= 0.4
+        elif book_diff < 25:
+            score *= 0.3
+        else:
+            score *= 0.2
+    
+    # Score for chapter accuracy
+    user_chapter = int(user_chapter)
+    if user_chapter == current_verse["chapter"]:
+        # Correct chapter, no penalty
+        pass
+    else:
+        # Calculate penalty based on distance
+        chapter_diff = abs(user_chapter - current_verse["chapter"])
+        if chapter_diff < 2:
+            score += 90
+        elif chapter_diff < 4:
+            score += 80
+        elif chapter_diff < 6:
+            score += 70
+        elif chapter_diff < 10:
+            score += 60
+        elif chapter_diff < 15:
+            score += 50
+        elif chapter_diff < 20:
+            score += 40
+        elif chapter_diff < 25:
+            score += 30
+        else:
+            score += 20
+    
+    # Score for verse accuracy
+    user_verse = int(user_verse)
+    if user_verse == current_verse["verse"]:
+        # Correct verse, no penalty
+        pass
+    else:
+        # Calculate penalty based on distance
+        verse_diff = abs(user_verse - current_verse["verse"])
+        if verse_diff < 2:
+            score += 9
+        elif verse_diff < 4:
+            score += 8
+        elif verse_diff < 6:
+            score += 7
+        elif verse_diff < 10:
+            score += 6
+        elif verse_diff < 15:
+            score += 5
+        elif verse_diff < 20:
+            score += 4
+        elif verse_diff < 25:
+            score += 3
+        else:
+            score += 2
+    
+    return int(score)
 
-def average(score: int):
-   percentage = float(0.0)
-   if score < 500:
-      return percentage
-   else:
-      percentage /= 10
-   return percentage
+def calculate_average(score: int) -> float:
+    """Calculate percentage score"""
+    if score < 500:
+        return 0.0
+    
+    # Scale score from 500-1000 to 0-100%
+    percentage = (score - 500) / 5.0
+    return round(percentage, 1)
+
+def get_book_names() -> list:
+    """Return a list of all Bible book names for validation"""
+    return [books[idx][0] for idx in range(1, 67)]
 
 if __name__ == "__main__":
-   pass
+    # Test code
+    test_verse = generate_random_verse()
+    print(f"Generated verse: {test_verse['book']} {test_verse['chapter']}:{test_verse['verse']}")

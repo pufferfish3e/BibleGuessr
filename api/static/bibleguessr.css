@@ -1,312 +1,319 @@
-@import url("https://fonts.googleapis.com/css?family=Raleway");
 
+@import url("https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Raleway:wght@400;600;700&display=swap");
+
+:root {
+    --primary-color: #e63946;
+    --secondary-color: #a8dadc;
+    --dark-color: #1d3557;
+    --light-color: #f1faee;
+    --glow-color: hsl(355, 78%, 56%);
+    --text-shadow-color: hsla(0, 0%, 80%, 0.3);
+    --button-hover-color: hsl(355, 78%, 65%);
+    --input-border-color: hsl(355, 78%, 50%);
+    --transition-speed: 0.3s;
+}
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Fira Sans', sans-serif;
-    color: white;
 }
-
-:root {
-    --glow-color: hsl(0, 100%, 65%);
-    --text-shadow-color: hsl(0 0% 80% / 0.3);
-    --button-hover-color: hsl(0, 100%, 75%);
-    --input-border-color: hsl(0, 100%, 50%);
-}
-
 
 html {
-    background: black;
+    background: #121212;
+    color: var(--light-color);
 }
 
 body {
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(circle at center, #1a1a1a, #121212);
 }
 
 .container {
-   padding: 30px;
-   font-family: 'Fira Sans', sans-serif;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
-
 
 .title {
-    align-items: center;
     text-align: center;
-    width: 100%;
-    color: #f8f9fa;
-    margin-bottom: 30px;
-    font-size: 2.5em;
-    font-weight: 600;
+    margin-bottom: 2rem;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--light-color);
+    text-shadow: 0 0 10px rgba(230, 57, 70, 0.5);
+    position: relative;
 }
 
+.title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 100px;
+    height: 3px;
+    background: var(--primary-color);
+    transform: translateX(-50%);
+    border-radius: 3px;
+}
+
+/* Text Display Section */
 .text-display {
-    font-size: 20px;
-    padding: 5px;
+    font-size: 1.25rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
     text-align: left;
     width: 100%;
     min-height: 200px;
     overflow: auto;
-    background-color: black;
+    background-color: rgba(0, 0, 0, 0.3);
     border: 2px solid var(--input-border-color);
     border-radius: 20px;
-    line-height: 1.6;
+    line-height: 1.8;
     white-space: pre-wrap;
-    color: white;
+    color: var(--light-color);
+    box-shadow: 0 0 20px rgba(230, 57, 70, 0.2);
+    transition: box-shadow var(--transition-speed) ease;
+}
+
+.text-display:hover {
+    box-shadow: 0 0 30px rgba(230, 57, 70, 0.3);
 }
 
 .text-display strong {
-   color: red;
+    color: var(--primary-color);
+    font-weight: 700;
 }
 
-
-.text-show {
-    width: 100%;
-    font-size: 16px;
-}
-
-
-.threeD {
-    margin-top: 30px;
-    color: whitesmoke;
-    letter-spacing: 0.1em;
-    transition: 0.3s;
-    text-shadow: 1px 1px 0 grey, 
-                 1px 2px 0 grey, 
-                 1px 3px 0 grey, 
-                 1px 4px 0 grey,
-                 1px 5px 0 grey, 
-                 1px 6px 0 grey, 
-                 1px 7px 0 grey, 
-                 1px 8px 0 grey,
-                 5px 13px 15px black;
-}
-
-.threeD:hover {
-    transition: 0.3s;
-    transform: scale(1.1) translate(-2%, -2%);
-    text-shadow: 1px -1px 0 grey, 
-                 1px -2px 0 grey, 
-                 1px -3px 0 grey,
-                 1px -4px 0 grey, 
-                 1px -5px 0 grey, 
-                 1px -6px 0 grey, 
-                 1px -7px 0 grey,
-                 1px -8px 0 grey, 
-                 5px -13px 15px black, 
-                 5px -13px 25px #808080;
-}
-
-
-.words {
-    transition: 700ms ease;
-    font-variation-settings: "wght" 311;
-    outline: none;
-}
-
-.words:hover {
-    font-variation-settings: "wght" 582; 
-    letter-spacing: 5px;
-}
-
-.word-container {
-   padding: 20px;
-   font-size: 20px;
-}
-
-.word-container p strong {
-   color: red;
-   font-size: 50px;
-}
-
-.word-container h3 strong {
-   color: white;
-}
-
-.word-container h4 strong {
-   color: red;
-   font-size: 25px;
-}
-.error {
-   opacity: 50%;
-   background-color: red; 
-}
-
-#error-message {
-    color: red; 
-    margin-top: 5px; 
-    font-size: 0.9em; 
-}
-
-.faulty-letter {
-    color:white;
-    opacity: 0.5;
-    animation: faulty-flicker 5s linear infinite;
-}
-
-.glowing-btn {
-    border: none;
-    position: relative;
-    color: var(--glow-color);
-    cursor: pointer;
-    border-radius: 30px;
-    font-family: "Raleway", sans-serif;
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: 0.1em;
-    width: auto;
-    min-width: 150px;
-    margin: 20px auto;
-}
-
-.glowing-txt {
-    opacity: 70%;
-    color: white;
-    text-align: center;
-    margin-right: -0.8em;
-    text-shadow: 0 0 0.5em var(--text-shadow-color), 
-                 0 0 0.5em var(--glow-color);
-    animation: text-flicker 5s linear infinite;
-}
-
-
-.glowing-btn::before {
-    content: "";
-    position: relative;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 100ms linear;
-}
-
-.glowing-btn::after {
-    content: "";
-    position: relative;
-    inset: 0;
-    opacity: 0;
-    z-index: -1;
-    background-color: var(--glow-color);
-    box-shadow: 0 0 2em 0.2em var(--glow-color);
-    transition: opacity 100ms linear;
-}
-
-.glowing-btn:hover {
-    color: rgba(0, 0, 0, 0.8);
-    text-shadow: none;
-    animation: none;
-    background: var(--glow-color);
-}
-
-.glowing-btn:hover .glowing-txt {
-    animation: none;
-}
-
-.glowing-btn:hover .faulty-letter {
-    animation: none;
-    text-shadow: none;
-    opacity: 1;
-}
-
-.glowing-btn:hover::before {
-    opacity: 1;
-}
-
-.glowing-btn:hover::after {
-    opacity: 1;
-}
-
+/* Input Form Area */
 .input-group-container {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 1.5rem;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
 }
-
 
 .input-group {
     width: 100%;
-    max-width: 800px; 
-    font-size: 20px;
-    padding: 20px;
-    margin: 10px;
+    max-width: 800px;
+    font-size: 1.1rem;
+    padding: 1.5rem;
+    margin: 0.5rem 0;
     border-radius: 20px;
-    background-color: black;
-    transition: all 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(230, 57, 70, 0.5);
+    transition: all var(--transition-speed) ease;
     outline: none;
     position: relative;
-    flex-direction: column;
     display: flex;
+    flex-direction: column;
+    color: var(--light-color);
 }
 
-.input-group:focus {
-    border-color: var(--input-border-color);
-    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.5);
-    color:white;
+.input-group:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
 }
 
-.input-group:hover:not(:focus) {
+.input-group:hover:not(:focus-within) {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);
 }
 
-.input-group::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: 14px;
-    background: linear-gradient(
-        45deg,
-        transparent 40%,
-        var(--input-border-color) 45%, 
-        transparent 50%
-    );
-    opacity: 1;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--light-color);
 }
 
+.input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.2);
+    color: var(--light-color);
+    transition: border-color var(--transition-speed) ease;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* Button Styles */
+.glowing-btn {
+    border: none;
+    position: relative;
+    color: var(--light-color);
+    cursor: pointer;
+    border-radius: 30px;
+    font-family: "Raleway", sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 1rem 2rem;
+    background-color: var(--primary-color);
+    width: auto;
+    min-width: 200px;
+    margin: 1.5rem auto;
+    display: block;
+    text-transform: uppercase;
+    transition: all var(--transition-speed) ease;
+    box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
+}
+
+.glowing-btn:hover {
+    background-color: var(--button-hover-color);
+    box-shadow: 0 6px 20px rgba(230, 57, 70, 0.5);
+    transform: translateY(-2px);
+}
+
+.glowing-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(230, 57, 70, 0.3);
+}
+
+.glowing-txt {
+    color: white;
+    text-align: center;
+    text-shadow: 0 0 5px var(--text-shadow-color);
+    animation: text-pulse 2s infinite;
+}
+
+/* Hint System */
+.hint-section {
+    margin: 2rem 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 .show-hints,
 .show-hints-2 {
     display: inline-block;
-    background-color: black;
-    color: #fff;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--light-color);
     text-decoration: none;
     padding: 0.75rem 1.5rem;
     border-radius: 30px;
     margin-top: 1rem;
-    transition: all 0.5s ease-in-out;
+    border: 1px solid rgba(230, 57, 70, 0.5);
+    transition: all var(--transition-speed) ease;
+    cursor: pointer;
+}
+
+.show-hints:hover,
+.show-hints-2:hover {
+    background-color: rgba(230, 57, 70, 0.1);
+    border-color: var(--primary-color);
 }
 
 .hints,
 .hints-2 {
-    display: none; 
-    margin-top: 10px;
-    padding: 10px;
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
     border-radius: 12px;
-    transition: all 0.5s ease-in-out;
+    background-color: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .hint {
-    padding: 5px;
-    margin-bottom: 5px;
-    background-color: #000000;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background-color: rgba(230, 57, 70, 0.1);
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
     line-height: 1.6;
-    transition: all 0.5s ease-in-out;
+    transition: all var(--transition-speed) ease;
+    border-left: 3px solid var(--primary-color);
 }
 
-.hint[data-show="true"] { 
-    display: block;
+.hint:hover {
+    background-color: rgba(230, 57, 70, 0.2);
 }
 
-::placeholder {
-    color: #95a5a6;
+/* Results Page Styles */
+.word-container {
+    padding: 2rem;
+    font-size: 1.2rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 20px rgba(230, 57, 70, 0.2);
 }
 
+.word-container h2 {
+    margin-bottom: 1rem;
+    color: var(--light-color);
+    font-size: 1.8rem;
+}
+
+.word-container p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.word-container p strong {
+    color: var(--primary-color);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.word-container h3 {
+    margin: 1.5rem 0 1rem;
+    color: var(--light-color);
+}
+
+.word-container h3 strong {
+    color: var(--light-color);
+    font-weight: 700;
+}
+
+.word-container h4 {
+    margin: 1rem 0;
+}
+
+.word-container h4 strong {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* Error Messages */
+.error {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 10px rgba(230, 57, 70, 0.5) !important;
+}
+
+#error-message {
+    color: var(--primary-color);
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Animations */
+@keyframes text-pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}
 
 @keyframes faulty-flicker {
     0%, 2% { opacity: 0.1; }
@@ -326,26 +333,69 @@ body {
     77%, 100% { opacity: 0.9; }
 }
 
-@keyframes border-flicker {
-    0%, 4% { opacity: 0.1; }
-    2%, 8%, 100% { opacity: 1; }
-    70% { opacity: 0.7; }
-}
-
-@media only screen and (max-width: 600px) {
+/* Responsive Design */
+@media only screen and (max-width: 768px) {
     .container {
-        padding: 20px;
+        padding: 1.5rem;
     }
 
     .title {
-        font-size: 2em;
+        font-size: 2.2rem;
     }
 
     .text-display {
-        padding: 15px;
+        font-size: 1.1rem;
+        padding: 1.2rem;
+    }
+
+    .input-group {
+        padding: 1.2rem;
     }
 
     .glowing-btn {
-        font-size: 1em;
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+        min-width: 180px;
+    }
+
+    .word-container {
+        padding: 1.5rem;
+    }
+
+    .word-container p strong {
+        font-size: 1.8rem;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .text-display {
+        font-size: 1rem;
+        padding: 1rem;
+        min-height: 150px;
+    }
+
+    .input-group {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    .glowing-btn {
+        font-size: 0.9rem;
+        padding: 0.7rem 1.2rem;
+        min-width: 150px;
+    }
+
+    .hint {
+        padding: 0.8rem;
+        font-size: 0.9rem;
     }
 }

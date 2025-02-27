@@ -1,32 +1,52 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="{{ url_for('static', filename='bibleguessr.css') }}">
-    <title>BibleGuessr!</title>
+    <title>BibleGuessr - Your Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bibleguessr.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1 class="title threeD">BibleGuessr</h1>
-
-        <div class="text-area-container">
-            <div class="text-display">{{ text_content }}</div>
+        <h1 class="title">Your Results</h1>
+        
+        <div class="text-display">
+            {{ text_content }}
         </div>
-      <div class="word-container">
-         <p>You got <strong>{{ score }}</strong> points!</p>
-         <h3>The actual verse was: <strong>{{ book }} {{ chapter }}:{{ verse }}</strong></h3>
-         <h4>You beat an average of about <strong>{{ average }}%</strong> of players!</h4>
-      </div>
-       <form action="{{ url_for('bibleguessr') }}" method="POST">
-           <button type="submit" class="show-hints glowing-btn">Play Again</button>
-       </form>
-      </div>
+        
+        <div class="word-container">
+            <h2>Your Score: <strong>{{ score }}</strong> / 1000</h2>
+            
+            {% if percentage %}
+            <p>Accuracy: <strong>{{ percentage }}%</strong></p>
+            {% endif %}
+            
+            <h3>Your Guess: <strong>{{ user_book }} {{ user_chapter }}:{{ user_verse }}</strong></h3>
+            <h3>Correct Answer: <strong>{{ book }} {{ chapter }}:{{ verse }}</strong></h3>
+            
+            {% if score > 900 %}
+                <h4>Amazing! <strong>Nearly perfect!</strong></h4>
+            {% elif score > 700 %}
+                <h4>Great job! <strong>You're very knowledgeable!</strong></h4>
+            {% elif score > 500 %}
+                <h4>Good work! <strong>You're on the right track!</strong></h4>
+            {% else %}
+                <h4>Keep studying! <strong>You'll get better with practice!</strong></h4>
+            {% endif %}
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <a href="{{ url_for('bibleguessr') }}" class="glowing-btn">
+                <span class="glowing-txt">Play Again</span>
+            </a>
+            
+            <a href="{{ url_for('home') }}" class="glowing-btn">
+                <span class="glowing-txt">Home</span>
+            </a>
+        </div>
     </div>
-   <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

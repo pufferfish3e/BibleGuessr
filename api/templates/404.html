@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - BibleGuessr</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bibleguessr.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">404 - Page Not Found</h1>
+        <div class="text-display">
+            <p>The page you're looking for doesn't exist. Let's get you back on track.</p>
+        </div>
+        <a href="{{ url_for('home') }}" class="glowing-btn">
+            <span class="glowing-txt">Go Home</span>
+        </a>
+    </div>
+</body>
+</html>
